@@ -1,0 +1,27 @@
+# Kjør kommando: sf package version list --packages 0Ho7U0000000001SAA --order-by MajorVersion,MinorVersion,PatchVersion --json
+
+# Kjør kommando: sf package version report --package 04t7U000000TqjvQAC --verbose --json
+
+# Der kan man finne: 
+´´´
+    "SubscriberPackageVersion": {
+      "attributes": {
+        "type": "SubscriberPackageVersion",
+        "url": "/services/data/v58.0/tooling/sobjects/SubscriberPackageVersion/04t7U0000008rE9QAI"
+      },
+      "Dependencies": {
+        "ids": [
+          {
+            "subscriberPackageVersionId": "04t7U000000TqjvQAC"
+          },
+          {
+            "subscriberPackageVersionId": "04t7U000000TqfjQAC"
+          }
+        ]
+      }
+    },
+´´´
+
+# Kjør samme report for hver packageVersionId og legg de til i en array med Package2Id og Version
+
+# Repeat igjen for alle dependencies igjen
