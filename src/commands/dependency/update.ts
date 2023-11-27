@@ -18,6 +18,7 @@ export type PackageDirectories = {
 
 export type PackageDirectory = {
   packageDirectories: PackageDirectories[];
+  packageAliases: { [key: string]: string };
 };
 
 export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> {
@@ -88,24 +89,38 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     const packs = files.packageDirectories[0].dependencies;
 
     const results: PackageUpdates[] = [];
-    for (const currentPackage of currentPackages) {
-      const testPackage = neededPackages.find((pack) => pack.packageAlias === currentPackage.package);
-      if (!testPackage) continue;
-      this.log(
-        `Comparing Package ${currentPackage.package}: original is ${currentPackage.versionNumber} and needed is ${testPackage?.packageVersion}`
-      );
-      if (
-        DependencyUpdate.checkIfNewerPackageVersion(currentPackage.versionNumber as string, testPackage?.packageVersion)
-      )
-        results.push(testPackage);
+    const aliasesToAdd: string[] = [];
+    for (const upgrades of neededPackages) {
+      const localPackage = packs.find((pack) => pack.package === upgrades.packageAlias);
+      if (localPackage) {
+        this.log(
+          `Comparing Package ${localPackage.package}: original is ${localPackage.versionNumber} and needed is ${upgrades?.packageVersion}`
+        );
+        if (DependencyUpdate.checkIfNewerPackageVersion(localPackage.versionNumber, upgrades?.packageVersion))
+          results.push(upgrades);
+      } else {
+        this.log(
+          `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias from package ID`
+        );
+        results.push(upgrades);
+        aliasesToAdd.push(upgrades.packageId);
+      }
     }
     this.log('\n');
-    for (const ret of results) {
+    for (const aliases of aliasesToAdd) {
+      files.packageAliases[aliases] = aliases;
+      this.log(`Adding alias for ${aliases}`);
+    }
+    // for (const ret of results) {
+    for (let index = results.length; index > 0; index--) {
+      const ret = results[index - 1];
       this.log(`Updating ${ret.packageAlias} to version ${ret.packageVersion}`);
       const replacementText = ret.packageVersion.substring(0, ret.packageVersion.lastIndexOf('.') + 1) + 'LATEST';
       const packer = packs.find((pack) => pack.package === ret.packageAlias);
       if (packer != null) {
         packer.versionNumber = replacementText;
+      } else {
+        packs.push({ package: ret.packageAlias, versionNumber: ret.packageVersion });
       }
     }
 
@@ -128,9 +143,12 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
 
     if (!results.Package2Id || !results.Version) return Promise.reject(null);
 
-    const alias = this.project.getAliasesFromPackageId(results.Package2Id);
-    returnList.push({ packageId: results.Package2Id, packageAlias: alias[0], packageVersion: results.Version });
-
+    let alias = this.project.getAliasesFromPackageId(results.Package2Id)[0];
+    if (!alias) {
+      alias = results.Package2Id;
+      this.log(`Could not find alias for dependant package ${results.Package2Id}, adding alias based on ID`);
+    }
+    returnList.push({ packageId: results.Package2Id, packageAlias: alias, packageVersion: results.Version });
     const dependantPackageIds = results.SubscriberPackageVersion?.Dependencies?.ids;
     if (dependantPackageIds) {
       const promiseMap: Array<Promise<PackageUpdates>> = [];
@@ -145,11 +163,16 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
             };
             const newPack = new PackageVersion(newOptions);
             const newResults = await newPack.report(false);
+            this.log(newResults);
             if (!results.Package2Id || !results.Version) reject(null);
-            const newAlias = this.project.getAliasesFromPackageId(newResults.Package2Id);
+            let newAlias = this.project.getAliasesFromPackageId(newResults.Package2Id)[0];
+            if (!newAlias) {
+              newAlias = newResults.Package2Id;
+              this.log(`Could not find alias for dependant package ${newResults.Package2Id}, adding alias based on ID`);
+            }
             resolve({
               packageId: newResults.Package2Id,
-              packageAlias: newAlias[0],
+              packageAlias: newAlias,
               packageVersion: newResults.Version,
             });
           })
