@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import { Messages, AuthInfo, Connection, OrgAuthorization, PackageDirDependency } from '@salesforce/core';
-import { PackageVersion, PackageVersionOptions } from '@salesforce/packaging';
+import { PackageVersion, PackageVersionOptions, Package } from '@salesforce/packaging';
 
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.loadMessages('dependency-updater', 'dependency.update');
@@ -100,18 +100,28 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
           results.push(upgrades);
       } else {
         this.log(
-          `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias from package ID`
+          `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias.`
         );
         results.push(upgrades);
         aliasesToAdd.push(upgrades.packageId);
       }
     }
     this.log('\n');
-    for (const aliases of aliasesToAdd) {
-      files.packageAliases[aliases] = aliases;
-      this.log(`Adding alias for ${aliases}`);
+    if (aliasesToAdd.length > 0) {
+      this.log('Fetching all aliases from dev hub');
+      const veryPackageList = await Package.list(connection);
+      for (const aliases of aliasesToAdd) {
+        const aliasFromDevHub = veryPackageList.find((aliasen) => aliasen.Id === aliases);
+        if (!aliasFromDevHub) {
+          this.log(`Could not find alias for ${aliases}, defaulting to ID`);
+          files.packageAliases[aliases] = aliases;
+          continue;
+        }
+        files.packageAliases[aliasFromDevHub.Name] = aliases;
+        results.find((packToUpdate) => packToUpdate.packageId === aliases).packageAlias = aliasFromDevHub.Name;
+        this.log(`Adding alias for ${aliasFromDevHub.Name}`);
+      }
     }
-    // for (const ret of results) {
     for (let index = results.length; index > 0; index--) {
       const ret = results[index - 1];
       this.log(`Updating ${ret.packageAlias} to version ${ret.packageVersion}`);
@@ -163,7 +173,6 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
             };
             const newPack = new PackageVersion(newOptions);
             const newResults = await newPack.report(false);
-            this.log(newResults);
             if (!results.Package2Id || !results.Version) reject(null);
             let newAlias = this.project.getAliasesFromPackageId(newResults.Package2Id)[0];
             if (!newAlias) {
