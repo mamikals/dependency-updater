@@ -45,8 +45,8 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     AuthInfo.getDevHubAuthInfos().then((a: OrgAuthorization[]) =>
       a.find(
         (mort: OrgAuthorization) =>
-          mort.configs != null && mort.configs.length !== 0 && mort.configs.includes('target-dev-hub')
-      )
+          mort.configs != null && mort.configs.length !== 0 && mort.configs.includes('target-dev-hub'),
+      ),
     );
 
   private static checkIfNewerPackageVersion = (originalVersion: string, versionToCheck: string): boolean => {
@@ -86,20 +86,20 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     const fileContent = readFileSync(filePath, 'utf8');
     const files = JSON.parse(fileContent) as PackageDirectory;
     const packs = files.packageDirectories[0].dependencies;
-
+    this.log(JSON.stringify(neededPackages));
     const results: PackageUpdates[] = [];
     const aliasesToAdd: string[] = [];
     for (const upgrades of neededPackages) {
       const localPackage = packs.find((pack) => pack.package === upgrades.packageAlias);
       if (localPackage) {
         this.log(
-          `Comparing Package ${localPackage.package}: original is ${localPackage.versionNumber} and needed is ${upgrades?.packageVersion}`
+          `Comparing Package ${localPackage.package}: original is ${localPackage.versionNumber} and needed is ${upgrades?.packageVersion}`,
         );
         if (DependencyUpdate.checkIfNewerPackageVersion(localPackage.versionNumber, upgrades?.packageVersion))
           results.push(upgrades);
       } else {
         this.log(
-          `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias.`
+          `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias.`,
         );
         results.push(upgrades);
         aliasesToAdd.push(upgrades.packageId);
@@ -117,15 +117,14 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
           continue;
         }
         files.packageAliases[aliasFromDevHub.Name] = aliases;
-        const fund = results.find((packToUpdate) => packToUpdate.packageId === aliases)
-        if(fund) {
+        const fund = results.find((packToUpdate) => packToUpdate.packageId === aliases);
+        if (fund) {
           fund.packageAlias = aliasFromDevHub.Name;
         }
         this.log(`Adding alias for ${aliasFromDevHub.Name}`);
       }
     }
-    for (let index = results.length; index > 0; index--) {
-      const ret = results[index - 1];
+    for (const ret of results) {
       this.log(`Updating ${ret.packageAlias} to version ${ret.packageVersion}`);
       const replacementText = ret.packageVersion.substring(0, ret.packageVersion.lastIndexOf('.') + 1) + 'LATEST';
       const packer = packs.find((pack) => pack.package === ret.packageAlias);
@@ -160,7 +159,6 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
       alias = results.Package2Id;
       this.log(`Could not find alias for dependant package ${results.Package2Id}, adding alias based on ID`);
     }
-    returnList.push({ packageId: results.Package2Id, packageAlias: alias, packageVersion: results.Version });
     const dependantPackageIds = results.SubscriberPackageVersion?.Dependencies?.ids;
     if (dependantPackageIds) {
       const promiseMap: Array<Promise<PackageUpdates>> = [];
@@ -175,7 +173,7 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
             };
             const newPack = new PackageVersion(newOptions);
             const newResults = await newPack.report(false);
-            if (!newResults.Package2Id || !newResults.Version ) return reject(null);
+            if (!newResults.Package2Id || !newResults.Version) return reject(null);
             let newAlias = this.project.getAliasesFromPackageId(newResults.Package2Id)[0];
             if (!newAlias) {
               newAlias = newResults.Package2Id;
@@ -186,13 +184,16 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
               packageAlias: newAlias,
               packageVersion: newResults.Version,
             });
-          })
-        )
+          }),
+        ),
       );
       const finalRet = await Promise.all(promiseMap).then((allPackages) => {
         allPackages.forEach((asd) => {
           returnList.push(asd);
         });
+        // Append package last, to maintain order
+        if (!results.Package2Id || !results.Version) return Promise.reject(null);
+        returnList.push({ packageId: results.Package2Id, packageAlias: alias, packageVersion: results.Version });
         return returnList;
       });
       return finalRet;
