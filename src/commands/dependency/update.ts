@@ -1,6 +1,6 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
-import { Messages, AuthInfo, Connection, OrgAuthorization, PackageDirDependency } from '@salesforce/core';
+import { Messages, AuthInfo, Connection, OrgAuthorization } from '@salesforce/core';
 import { PackageVersion, PackageVersionOptions, Package } from '@salesforce/packaging';
 
 Messages.importMessagesDirectory(__dirname);
@@ -81,7 +81,6 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     this.log(`Connected to ${authOrg} (${authInfo.getFields().orgId}) with API version ${connection.version}`);
 
     const neededPackages = await this.getPackageAlias(connection, flags['package-id']);
-    const currentPackages = this.project.getPackageDirectories()[0]?.dependencies as PackageDirDependency[];
 
     const filePath = './sfdx-project.json';
     const fileContent = readFileSync(filePath, 'utf8');
@@ -118,7 +117,10 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
           continue;
         }
         files.packageAliases[aliasFromDevHub.Name] = aliases;
-        results.find((packToUpdate) => packToUpdate.packageId === aliases).packageAlias = aliasFromDevHub.Name;
+        const fund = results.find((packToUpdate) => packToUpdate.packageId === aliases)
+        if(fund) {
+          fund.packageAlias = aliasFromDevHub.Name;
+        }
         this.log(`Adding alias for ${aliasFromDevHub.Name}`);
       }
     }
@@ -173,13 +175,13 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
             };
             const newPack = new PackageVersion(newOptions);
             const newResults = await newPack.report(false);
-            if (!results.Package2Id || !results.Version) reject(null);
+            if (!newResults.Package2Id || !newResults.Version ) return reject(null);
             let newAlias = this.project.getAliasesFromPackageId(newResults.Package2Id)[0];
             if (!newAlias) {
               newAlias = newResults.Package2Id;
               this.log(`Could not find alias for dependant package ${newResults.Package2Id}, adding alias based on ID`);
             }
-            resolve({
+            return resolve({
               packageId: newResults.Package2Id,
               packageAlias: newAlias,
               packageVersion: newResults.Version,
