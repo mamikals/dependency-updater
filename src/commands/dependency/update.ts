@@ -86,7 +86,7 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     const fileContent = readFileSync(filePath, 'utf8');
     const files = JSON.parse(fileContent) as PackageDirectory;
     const packs = files.packageDirectories[0].dependencies;
-    this.log(JSON.stringify(neededPackages));
+
     const results: PackageUpdates[] = [];
     const aliasesToAdd: string[] = [];
     for (const upgrades of neededPackages) {
