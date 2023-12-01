@@ -13,7 +13,12 @@ export type PackageUpdates = {
   packageVersion: string;
 };
 export type PackageDirectories = {
-  dependencies: Array<{ package: string; versionNumber: string }>;
+  dependencies: PackageWithVersionNumber[];
+};
+
+export type PackageWithVersionNumber = {
+  package: string;
+  versionNumber: string;
 };
 
 export type PackageDirectory = {
@@ -90,6 +95,8 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     this.log('Fetching all aliases from dev hub');
     const veryPackageList = await Package.list(connection);
 
+    const updatedPacks: PackageWithVersionNumber[] = [];
+
     for (const upgrades of neededPackages) {
       const localPackage = packs.find((pack) => pack.package === upgrades.packageAlias);
       if (localPackage) {
@@ -101,6 +108,7 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
         const replacementText =
           upgrades.packageVersion.substring(0, upgrades.packageVersion.lastIndexOf('.') + 1) + 'LATEST';
         localPackage.versionNumber = replacementText;
+        updatedPacks.push(localPackage);
       } else {
         this.log(
           `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias.`,
@@ -115,12 +123,16 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
         this.log(`Adding alias for ${aliasFromDevHub.Name}`);
         const replacementText =
           upgrades.packageVersion.substring(0, upgrades.packageVersion.lastIndexOf('.') + 1) + 'LATEST';
-        packs.push({ package: aliasFromDevHub.Name, versionNumber: replacementText });
+        updatedPacks.push({ package: aliasFromDevHub.Name, versionNumber: replacementText });
       }
     }
-    this.log('\n');
+    for (const ignoredDependencies of packs) {
+      if (!updatedPacks.some((p) => p.package === ignoredDependencies.package)) {
+        updatedPacks.push(ignoredDependencies);
+      }
+    }
 
-    files.packageDirectories[0].dependencies = packs;
+    files.packageDirectories[0].dependencies = updatedPacks;
     writeFileSync(filePath, JSON.stringify(files, null, 4));
 
     return neededPackages;
