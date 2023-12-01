@@ -87,8 +87,9 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     const files = JSON.parse(fileContent) as PackageDirectory;
     const packs = files.packageDirectories[0].dependencies;
 
-    const results: PackageUpdates[] = [];
-    const aliasesToAdd: string[] = [];
+    this.log('Fetching all aliases from dev hub');
+    const veryPackageList = await Package.list(connection);
+
     for (const upgrades of neededPackages) {
       const localPackage = packs.find((pack) => pack.package === upgrades.packageAlias);
       if (localPackage) {
@@ -96,49 +97,33 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
           `Comparing Package ${localPackage.package}: original is ${localPackage.versionNumber} and needed is ${upgrades?.packageVersion}`,
         );
         if (DependencyUpdate.checkIfNewerPackageVersion(localPackage.versionNumber, upgrades?.packageVersion))
-          results.push(upgrades);
+          this.log(`Updating ${upgrades.packageAlias} to version ${upgrades.packageVersion}`);
+        const replacementText =
+          upgrades.packageVersion.substring(0, upgrades.packageVersion.lastIndexOf('.') + 1) + 'LATEST';
+        localPackage.versionNumber = replacementText;
       } else {
         this.log(
           `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias.`,
         );
-        results.push(upgrades);
-        aliasesToAdd.push(upgrades.packageId);
+        const aliasFromDevHub = veryPackageList.find((aliasen) => aliasen.Id === upgrades.packageId);
+        if (!aliasFromDevHub) {
+          this.log(`Could not find alias for ${upgrades.packageId}, defaulting to ID`);
+          files.packageAliases[upgrades.packageId] = upgrades.packageId;
+          continue;
+        }
+        files.packageAliases[aliasFromDevHub.Name] = upgrades.packageId;
+        this.log(`Adding alias for ${aliasFromDevHub.Name}`);
+        const replacementText =
+          upgrades.packageVersion.substring(0, upgrades.packageVersion.lastIndexOf('.') + 1) + 'LATEST';
+        packs.push({ package: aliasFromDevHub.Name, versionNumber: replacementText });
       }
     }
     this.log('\n');
-    if (aliasesToAdd.length > 0) {
-      this.log('Fetching all aliases from dev hub');
-      const veryPackageList = await Package.list(connection);
-      for (const aliases of aliasesToAdd) {
-        const aliasFromDevHub = veryPackageList.find((aliasen) => aliasen.Id === aliases);
-        if (!aliasFromDevHub) {
-          this.log(`Could not find alias for ${aliases}, defaulting to ID`);
-          files.packageAliases[aliases] = aliases;
-          continue;
-        }
-        files.packageAliases[aliasFromDevHub.Name] = aliases;
-        const fund = results.find((packToUpdate) => packToUpdate.packageId === aliases);
-        if (fund) {
-          fund.packageAlias = aliasFromDevHub.Name;
-        }
-        this.log(`Adding alias for ${aliasFromDevHub.Name}`);
-      }
-    }
-    for (const ret of results) {
-      this.log(`Updating ${ret.packageAlias} to version ${ret.packageVersion}`);
-      const replacementText = ret.packageVersion.substring(0, ret.packageVersion.lastIndexOf('.') + 1) + 'LATEST';
-      const packer = packs.find((pack) => pack.package === ret.packageAlias);
-      if (packer != null) {
-        packer.versionNumber = replacementText;
-      } else {
-        packs.push({ package: ret.packageAlias, versionNumber: replacementText });
-      }
-    }
 
     files.packageDirectories[0].dependencies = packs;
     writeFileSync(filePath, JSON.stringify(files, null, 4));
 
-    return results;
+    return neededPackages;
   }
 
   private getPackageAlias = async (connection: Connection, packageId: string): Promise<PackageUpdates[]> => {
