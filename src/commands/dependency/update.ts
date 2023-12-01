@@ -130,7 +130,7 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
       if (packer != null) {
         packer.versionNumber = replacementText;
       } else {
-        packs.push({ package: ret.packageAlias, versionNumber: ret.packageVersion });
+        packs.push({ package: ret.packageAlias, versionNumber: replacementText });
       }
     }
 
