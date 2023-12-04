@@ -23,7 +23,7 @@
     "@typescript-eslint/parser": "^6.13.1",
     "chai": "^4.3.10",
     "eslint": "^8.54.0",
-    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-config-salesforce": "^2.0.2",
     "eslint-config-salesforce-typescript": "^3.0.5",
     "eslint-plugin-import": "2.29.0",
