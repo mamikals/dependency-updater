@@ -1559,7 +1559,7 @@
     "@types/expect" "^1.20.4"
     "@types/node" "*"
 
-"@typescript-eslint/eslint-plugin@^6.13.1", "@typescript-eslint/eslint-plugin@^6.13.2":
+"@typescript-eslint/eslint-plugin@^6.13.2":
   version "6.13.2"
   resolved "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-6.13.2.tgz"
   integrity sha512-3+9OGAWHhk4O1LlcwLBONbdXsAhLjyCFogJY/cWy2lxdVJ2JrcTF2pTGMaLl2AE7U1l31n8Py4a8bx5DLf/0dQ==
@@ -3291,7 +3291,7 @@ escodegen@^2.1.0:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-prettier@^9.0.0, eslint-config-prettier@^9.1.0:
+eslint-config-prettier@^9.1.0:
   version "9.1.0"
   resolved "https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-9.1.0.tgz"
   integrity sha512-NSWl5BFQWEPi1j4TjVNItzYV7dZXZ+wP6I6ZhrBGpChQhZRUaElihE9uRRkcbRnNb76UMKDF3r+WTmNcGPKsqw==
@@ -3301,15 +3301,15 @@ eslint-config-salesforce-license@^0.2.0:
   resolved "https://registry.npmjs.org/eslint-config-salesforce-license/-/eslint-config-salesforce-license-0.2.0.tgz"
   integrity sha512-DJdBvgj82Erum82YMe+YvG/o6ukna3UA++lRl0HSTldj0VlBl3Q8hzCp97nRXZHra6JH1I912yievZzklXDw6w==
 
-eslint-config-salesforce-typescript@^3.0.5, eslint-config-salesforce-typescript@^3.0.8:
-  version "3.0.8"
-  resolved "https://registry.npmjs.org/eslint-config-salesforce-typescript/-/eslint-config-salesforce-typescript-3.0.8.tgz"
-  integrity sha512-396gljUudnoOA7to1DtFx9vPGFci74jlLIeDFZsOD8LtLSmhaXvHiQMNLTseHxeAUG75Gh1okgfVzpn9sJBV4w==
+eslint-config-salesforce-typescript@^3.0.10, eslint-config-salesforce-typescript@^3.0.5:
+  version "3.0.10"
+  resolved "https://registry.yarnpkg.com/eslint-config-salesforce-typescript/-/eslint-config-salesforce-typescript-3.0.10.tgz#8b5b456d35743548b3f7586f4362f57d19104cec"
+  integrity sha512-QPvVLXCvhQnhCo1UtX/6BbaiIfM8fyT/vhcBcTHg1XDTrFilaKKNSyeQOAC181Yp7HJVu2+OjbNL5CwVT9Bx3g==
   dependencies:
-    "@typescript-eslint/eslint-plugin" "^6.13.1"
+    "@typescript-eslint/eslint-plugin" "^6.13.2"
     "@typescript-eslint/parser" "^6.13.1"
     eslint "^8.55.0"
-    eslint-config-prettier "^9.0.0"
+    eslint-config-prettier "^9.1.0"
     eslint-config-salesforce "^2.0.2"
     eslint-config-salesforce-license "^0.2.0"
     eslint-plugin-header "^3.1.1"
