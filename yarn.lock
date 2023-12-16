@@ -946,12 +946,12 @@
     picocolors "^1.0.0"
     tslib "^2.6.0"
 
-"@salesforce/cli-plugins-testkit@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.npmjs.org/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.1.0.tgz"
-  integrity sha512-P5tYlNqE87lX9Yp2aAsK75PICoAbmrSK3LEqiIVbtn75PN3OKiD1JEEX2ZDu+HWtO4/nxPtO4JFvX5j00EZGBA==
+"@salesforce/cli-plugins-testkit@^5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.1.2.tgz#a8d0c988d26d22cbaa4f19e6be9f0d1a28238ef2"
+  integrity sha512-3tF1invyikFvkDfnRdFJBrhDV4gcO0cf7gKRT/9GmIHOF88qjiPiKy4VYx7q1fZI8xn6ZEov0LmMziLUVYjdtg==
   dependencies:
-    "@salesforce/core" "^6.2.2"
+    "@salesforce/core" "^6.4.1"
     "@salesforce/kit" "^3.0.15"
     "@salesforce/ts-types" "^2.0.9"
     "@types/shelljs" "^0.8.15"
@@ -985,10 +985,10 @@
     semver "^7.5.4"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^6.2.0", "@salesforce/core@^6.2.2", "@salesforce/core@^6.3.0":
-  version "6.3.0"
-  resolved "https://registry.npmjs.org/@salesforce/core/-/core-6.3.0.tgz"
-  integrity sha512-PLPDWRXbLi+ECNER6NHLTK/Ed9tMndmyVbBTE0/vyErXtCCPF6aSNyUmvFT1NrIZRrYA9p/QRHOtYUO7kPG4zg==
+"@salesforce/core@^6.2.0", "@salesforce/core@^6.2.2", "@salesforce/core@^6.3.0", "@salesforce/core@^6.4.1":
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.4.1.tgz#27edd083b62ee96d6270b60da6dfb959bff1a0a5"
+  integrity sha512-Bn/Pox5JLeVBg35zgSmtNU+f9wdOaa7a/hmCIvQibci1dpKtLGUmSpdHibWR6zHag8ZoRkueea7zuqEjYzECyA==
   dependencies:
     "@salesforce/kit" "^3.0.15"
     "@salesforce/schemas" "^1.6.1"
