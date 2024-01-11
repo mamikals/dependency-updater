@@ -4,7 +4,7 @@ import { Messages, AuthInfo, Connection, OrgAuthorization } from '@salesforce/co
 import { PackageVersion, PackageVersionOptions, Package } from '@salesforce/packaging';
 
 Messages.importMessagesDirectory(__dirname);
-const messages = Messages.loadMessages('dependency-updater', 'dependency.update');
+const messages = Messages.loadMessages('dependency-updater', 'deps.update');
 
 export type DependencyUpdateResult = PackageUpdates[] | null;
 export type PackageUpdates = {

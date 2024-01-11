@@ -1,7 +1,7 @@
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
-import DependencyUpdate from '..\\..\\..\\src\\commands\\dependency\\update';
+import DependencyUpdate from '..\\..\\..\\src\\commands\\deps\\update';
 
 describe('dependency update', () => {
   const $$ = new TestContext();
@@ -27,7 +27,7 @@ describe('dependency update', () => {
   it('runs hello with --json and no provided name', async () => {
     const result = await DependencyUpdate.run([]);
     expect(result.path).to.equal(
-      'C:\\Users\\M162489\\Documents\\SF\\Plugins\\dependency-updater\\src\\commands\\dependency\\update.ts'
+      'C:\\Users\\M162489\\Documents\\SF\\Plugins\\dependency-updater\\src\\commands\\dependency\\update.ts',
     );
   });
 
