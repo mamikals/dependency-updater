@@ -103,12 +103,13 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
         this.log(
           `Comparing Package ${localPackage.package}: original is ${localPackage.versionNumber} and needed is ${upgrades?.packageVersion}`,
         );
-        if (DependencyUpdate.checkIfNewerPackageVersion(localPackage.versionNumber, upgrades?.packageVersion))
+        if (DependencyUpdate.checkIfNewerPackageVersion(localPackage.versionNumber, upgrades?.packageVersion)) {
           this.log(`Updating ${upgrades.packageAlias} to version ${upgrades.packageVersion}`);
-        const replacementText =
-          upgrades.packageVersion.substring(0, upgrades.packageVersion.lastIndexOf('.') + 1) + 'LATEST';
-        localPackage.versionNumber = replacementText;
-        updatedPacks.push(localPackage);
+          const replacementText =
+            upgrades.packageVersion.substring(0, upgrades.packageVersion.lastIndexOf('.') + 1) + 'LATEST';
+          localPackage.versionNumber = replacementText;
+          updatedPacks.push(localPackage);
+        }
       } else {
         this.log(
           `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias.`,
