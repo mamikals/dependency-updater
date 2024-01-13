@@ -946,12 +946,12 @@
     picocolors "^1.0.0"
     tslib "^2.6.0"
 
-"@salesforce/cli-plugins-testkit@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.npmjs.org/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.1.0.tgz"
-  integrity sha512-P5tYlNqE87lX9Yp2aAsK75PICoAbmrSK3LEqiIVbtn75PN3OKiD1JEEX2ZDu+HWtO4/nxPtO4JFvX5j00EZGBA==
+"@salesforce/cli-plugins-testkit@^5.1.7":
+  version "5.1.7"
+  resolved "https://registry.yarnpkg.com/@salesforce/cli-plugins-testkit/-/cli-plugins-testkit-5.1.7.tgz#79c21424fa7775c9b3220ee566cf4a467154478e"
+  integrity sha512-ZItoRNujnYN5andRLsTjVXp82W114d9TceWEbOOB2CrUofFdqiSbyiKxfg2/VkB2zk1t3B/ueVkFbiQtoLowPA==
   dependencies:
-    "@salesforce/core" "^6.2.2"
+    "@salesforce/core" "^6.4.7"
     "@salesforce/kit" "^3.0.15"
     "@salesforce/ts-types" "^2.0.9"
     "@types/shelljs" "^0.8.15"
@@ -959,7 +959,7 @@
     jszip "^3.10.1"
     shelljs "^0.8.4"
     strip-ansi "6.0.1"
-    ts-retry-promise "^0.7.1"
+    ts-retry-promise "^0.8.0"
 
 "@salesforce/core@^5.3.20":
   version "5.3.20"
@@ -985,10 +985,10 @@
     semver "^7.5.4"
     ts-retry-promise "^0.7.1"
 
-"@salesforce/core@^6.2.0", "@salesforce/core@^6.2.2", "@salesforce/core@^6.3.0":
-  version "6.3.0"
-  resolved "https://registry.npmjs.org/@salesforce/core/-/core-6.3.0.tgz"
-  integrity sha512-PLPDWRXbLi+ECNER6NHLTK/Ed9tMndmyVbBTE0/vyErXtCCPF6aSNyUmvFT1NrIZRrYA9p/QRHOtYUO7kPG4zg==
+"@salesforce/core@^6.2.0", "@salesforce/core@^6.2.2", "@salesforce/core@^6.3.0", "@salesforce/core@^6.4.7":
+  version "6.4.7"
+  resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-6.4.7.tgz#f15538380aa5c75de697d3c95a2ddbdabae69dbb"
+  integrity sha512-gebjw2xC8Z0gqS3lYRQWz7J+PuGZtybotrnnaJbnzzxdfpBFIp6PjW4nt/235BQW9UWFTLaQh+AwkFgmMTTSkA==
   dependencies:
     "@salesforce/kit" "^3.0.15"
     "@salesforce/schemas" "^1.6.1"
@@ -1002,9 +1002,9 @@
     jsforce "^2.0.0-beta.29"
     jsonwebtoken "9.0.2"
     jszip "3.10.1"
-    pino "^8.16.2"
+    pino "^8.17.2"
     pino-abstract-transport "^1.1.0"
-    pino-pretty "^10.2.3"
+    pino-pretty "^10.3.1"
     proper-lockfile "^4.1.2"
     semver "^7.5.4"
     ts-retry-promise "^0.7.1"
@@ -4295,6 +4295,11 @@ help-me@^4.0.1:
     glob "^8.0.0"
     readable-stream "^3.6.0"
 
+help-me@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/help-me/-/help-me-5.0.0.tgz#b1ebe63b967b74060027c2ac61f9be12d354a6f6"
+  integrity sha512-7xgomUX6ADmcYzFik0HzAxh/73YlKR9bmFzf51CZwR+b6YtzU2m0u49hQCqV6SvlqIqsaxovfwdvbnsw3b/zpg==
+
 hosted-git-info@^2.1.4:
   version "2.8.9"
   resolved "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.8.9.tgz"
@@ -6781,12 +6786,32 @@ pino-pretty@^10.2.3:
     sonic-boom "^3.0.0"
     strip-json-comments "^3.1.1"
 
+pino-pretty@^10.3.1:
+  version "10.3.1"
+  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-10.3.1.tgz#e3285a5265211ac6c7cd5988f9e65bf3371a0ca9"
+  integrity sha512-az8JbIYeN/1iLj2t0jR9DV48/LQ3RC6hZPpapKPkb84Q+yTidMCpgWxIT3N0flnBDilyBQ1luWNpOeJptjdp/g==
+  dependencies:
+    colorette "^2.0.7"
+    dateformat "^4.6.3"
+    fast-copy "^3.0.0"
+    fast-safe-stringify "^2.1.1"
+    help-me "^5.0.0"
+    joycon "^3.1.1"
+    minimist "^1.2.6"
+    on-exit-leak-free "^2.1.0"
+    pino-abstract-transport "^1.0.0"
+    pump "^3.0.0"
+    readable-stream "^4.0.0"
+    secure-json-parse "^2.4.0"
+    sonic-boom "^3.0.0"
+    strip-json-comments "^3.1.1"
+
 pino-std-serializers@^6.0.0:
   version "6.2.2"
   resolved "https://registry.npmjs.org/pino-std-serializers/-/pino-std-serializers-6.2.2.tgz"
   integrity sha512-cHjPPsE+vhj/tnhCy/wiMh3M3z3h/j15zHQX+S9GkTBgqJuTuJzYJ4gUyACLhDaJ7kk9ba9iRDmbH2tJU03OiA==
 
-pino@^8.16.0, pino@^8.16.2:
+pino@^8.16.0:
   version "8.16.2"
   resolved "https://registry.npmjs.org/pino/-/pino-8.16.2.tgz"
   integrity sha512-2advCDGVEvkKu9TTVSa/kWW7Z3htI/sBKEZpqiHk6ive0i/7f5b1rsU8jn0aimxqfnSz5bj/nOYkwhBUn5xxvg==
@@ -6797,6 +6822,23 @@ pino@^8.16.0, pino@^8.16.2:
     pino-abstract-transport v1.1.0
     pino-std-serializers "^6.0.0"
     process-warning "^2.0.0"
+    quick-format-unescaped "^4.0.3"
+    real-require "^0.2.0"
+    safe-stable-stringify "^2.3.1"
+    sonic-boom "^3.7.0"
+    thread-stream "^2.0.0"
+
+pino@^8.17.2:
+  version "8.17.2"
+  resolved "https://registry.yarnpkg.com/pino/-/pino-8.17.2.tgz#0ed20175623a69d31664a1e8a5f85476272224be"
+  integrity sha512-LA6qKgeDMLr2ux2y/YiUt47EfgQ+S9LznBWOJdN3q1dx2sv0ziDLUBeVpyVv17TEcGCBuWf0zNtg3M5m1NhhWQ==
+  dependencies:
+    atomic-sleep "^1.0.0"
+    fast-redact "^3.1.1"
+    on-exit-leak-free "^2.1.0"
+    pino-abstract-transport v1.1.0
+    pino-std-serializers "^6.0.0"
+    process-warning "^3.0.0"
     quick-format-unescaped "^4.0.3"
     real-require "^0.2.0"
     safe-stable-stringify "^2.3.1"
@@ -6890,6 +6932,11 @@ process-warning@^2.0.0:
   version "2.3.1"
   resolved "https://registry.npmjs.org/process-warning/-/process-warning-2.3.1.tgz"
   integrity sha512-JjBvFEn7MwFbzUDa2SRtKJSsyO0LlER4V/FmwLMhBlXNbGgGxdyFCxIdMDLerWUycsVUyaoM9QFLvppFy4IWaQ==
+
+process-warning@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/process-warning/-/process-warning-3.0.0.tgz#96e5b88884187a1dce6f5c3166d611132058710b"
+  integrity sha512-mqn0kFRl0EoqhnL0GQ0veqFHyIN1yig9RHh/InzORTUiZHFRAur+aMtRkELNwGs9aNwKS6tg/An4NYBPGwvtzQ==
 
 process@^0.11.10:
   version "0.11.10"
@@ -8056,6 +8103,11 @@ ts-retry-promise@^0.7.1:
   version "0.7.1"
   resolved "https://registry.npmjs.org/ts-retry-promise/-/ts-retry-promise-0.7.1.tgz"
   integrity sha512-NhHOCZ2AQORvH42hOPO5UZxShlcuiRtm7P2jIq2L2RY3PBxw2mLnUsEdHrIslVBFya1v5aZmrR55lWkzo13LrQ==
+
+ts-retry-promise@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/ts-retry-promise/-/ts-retry-promise-0.8.0.tgz#0a0c57b510827d5630da4b0c47f36b55b83a49e3"
+  integrity sha512-elI/GkojPANBikPaMWQnk4T/bOJ6tq/hqXyQRmhfC9PAD6MoHmXIXK7KilJrlpx47VAKCGcmBrTeK5dHk6YAYg==
 
 tsconfck@^3.0.0:
   version "3.0.0"
