@@ -25,3 +25,7 @@
 # Kjør samme report for hver packageVersionId og legg de til i en array med Package2Id og Version
 
 # Repeat igjen for alle dependencies igjen
+
+
+#! !BUG
+Hvis en pakke er dependent på ting men må ikke oppdatere versjonen så blir pakken lagt over dependenciene

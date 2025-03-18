@@ -85,20 +85,20 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     const connection = await Connection.create({ authInfo });
     this.log(`Connected to ${authOrg} (${authInfo.getFields().orgId}) with API version ${connection.version}`);
 
-    const neededPackages = await this.getPackageAlias(connection, flags['package-id']);
+    const packagesToUpdate = await this.getPackageAlias(connection, flags['package-id']);
 
     const filePath = './sfdx-project.json';
     const fileContent = readFileSync(filePath, 'utf8');
     const files = JSON.parse(fileContent) as PackageDirectory;
-    const packs = files.packageDirectories[0].dependencies;
+    const localDependencies = files.packageDirectories[0].dependencies;
 
     this.log('Fetching all aliases from dev hub');
     const veryPackageList = await Package.list(connection);
 
     const updatedPacks: PackageWithVersionNumber[] = [];
 
-    for (const upgrades of neededPackages) {
-      const localPackage = packs.find((pack) => pack.package === upgrades.packageAlias);
+    for (const upgrades of packagesToUpdate) {
+      const localPackage = localDependencies.find((pack) => pack.package === upgrades.packageAlias);
       if (localPackage) {
         this.log(
           `Comparing Package ${localPackage.package}: original is ${localPackage.versionNumber} and needed is ${upgrades?.packageVersion}`,
@@ -127,16 +127,53 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
         updatedPacks.push({ package: aliasFromDevHub.Name, versionNumber: replacementText });
       }
     }
-    for (const ignoredDependencies of packs) {
+    for (const ignoredDependencies of localDependencies) {
       if (!updatedPacks.some((p) => p.package === ignoredDependencies.package)) {
         updatedPacks.push(ignoredDependencies);
+      }
+    }
+
+    const mergedDependencies: PackageWithVersionNumber[] = [];
+    const foundDependencies: string[] = [];
+
+    // list_left = "whijk"
+    // list_right = "jwmna"
+    // list_merged = ""
+    let pos = 0;
+
+    // for x in list_left:
+    //   if not x in list_merged:
+    //     if x in list_right:
+    //       xpos = list_right.index(x)
+    //       list_merged += list_right[pos:xpos]
+    //       pos = xpos + 1
+    //     list_merged += x
+    // list_merged += list_right[pos:]
+
+    // print list_merged
+
+    for (const dep of localDependencies) {
+      const index = packagesToUpdate.findIndex((pack) => pack.packageAlias === dep.package);
+      const foundDependency = packagesToUpdate[index];
+      if (!foundDependencies.includes(foundDependency?.packageAlias)) {
+        this.log('Whowzers');
+        const xpos = index;
+        mergedDependencies.push(
+          ...packagesToUpdate
+            .slice(pos, xpos)
+            .map(
+              (pack) =>
+                ({ package: pack.packageAlias, versionNumber: pack.packageVersion }) as PackageWithVersionNumber,
+            ),
+        );
+        pos = xpos + 1;
       }
     }
 
     files.packageDirectories[0].dependencies = updatedPacks;
     writeFileSync(filePath, JSON.stringify(files, null, 4));
 
-    return neededPackages;
+    return packagesToUpdate;
   }
 
   private getPackageAlias = async (connection: Connection, packageId: string): Promise<PackageUpdates[]> => {
