@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { TestContext } from '@salesforce/core/lib/testSetup';
 import { expect } from 'chai';
 import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
@@ -27,7 +31,7 @@ describe('dependency update', () => {
   it('runs hello with --json and no provided name', async () => {
     const result = await DependencyUpdate.run([]);
     expect(result.path).to.equal(
-      'C:\\Users\\M162489\\Documents\\SF\\Plugins\\dependency-updater\\src\\commands\\dependency\\update.ts',
+      'C:\\Users\\M162489\\Documents\\SF\\Plugins\\dependency-updater\\src\\commands\\dependency\\update.ts'
     );
   });
 

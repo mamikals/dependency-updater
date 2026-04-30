@@ -1,66 +1,41 @@
 {
   "name": "dependency-updater",
-  "description": "Updates the dependencies of a desired package",
-  "version": "0.0.1",
+  "description": "Updates the dependency of a package",
+  "version": "1.0.0",
   "dependencies": {
-    "@oclif/core": "^3.13.2",
-    "@salesforce/core": "^6.3.0",
-    "@salesforce/kit": "^3.0.15",
-    "@salesforce/sf-plugins-core": "^5.0.6",
-    "got": "11",
-    "tslib": "^2.6.2"
+    "@oclif/core": "^4",
+    "@salesforce/core": "^8",
+    "@salesforce/packaging": "^4.22.12",
+    "@salesforce/sf-plugins-core": "^12"
   },
   "devDependencies": {
-    "@salesforce/cli-plugins-testkit": "^5.1.0",
-    "@salesforce/dev-config": "^4.1.0",
-    "@salesforce/dev-scripts": "^8.0.0",
-    "@salesforce/packaging": "^3.0.9",
-    "@salesforce/prettier-config": "^0.0.3",
-    "@salesforce/ts-sinon": "^1.4.19",
-    "@swc/core": "^1.3.100",
-    "@types/inquirer": "^9.0.7",
-    "@types/node": "20.10.4",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@typescript-eslint/parser": "^6.13.2",
-    "chai": "^4.3.10",
-    "eslint": "^8.55.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-salesforce": "^2.0.2",
-    "eslint-config-salesforce-typescript": "^3.0.8",
-    "eslint-plugin-import": "2.29.0",
-    "eslint-plugin-jsdoc": "^46.9.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "eslint-plugin-sf-plugin": "^1.16.15",
-    "lint-staged": "^15.2.0",
-    "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
-    "oclif": "^4.0.4",
-    "prettier": "^3.1.0",
-    "shx": "0.3.4",
-    "sinon": "17.0.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.3.3",
-    "wireit": "^0.14.1"
+    "@oclif/plugin-command-snapshot": "^5.1.9",
+    "@salesforce/cli-plugins-testkit": "^5.3.10",
+    "@salesforce/dev-scripts": "^10",
+    "eslint-plugin-sf-plugin": "^1.18.6",
+    "oclif": "^4.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
   },
   "engines": {
-    "node": ">=18.12.0"
+    "node": ">=18.0.0"
   },
   "files": [
     "/lib",
     "/messages",
-    "/oclif.manifest.json"
+    "/oclif.manifest.json",
+    "/oclif.lock"
   ],
   "keywords": [
     "force",
     "salesforce",
-    "sfdx",
     "salesforcedx",
-    "sfdx-plugin",
+    "sf",
     "sf-plugin",
-    "sf"
+    "sfdx",
+    "sfdx-plugin"
   ],
   "license": "BSD-3-Clause",
-  "main": "lib/index.js",
   "oclif": {
     "commands": "./lib/commands",
     "bin": "sf",
@@ -70,20 +45,22 @@
     ],
     "topics": {
       "dependency": {
-        "description": "description for dependency"
+        "description": "Commands to manage dependencies."
       }
-    }
+    },
+    "flexibleTaxonomy": true
   },
   "scripts": {
     "build": "wireit",
     "clean": "sf-clean",
     "clean-all": "sf-clean all",
-    "clean:lib": "shx rm -rf lib && shx rm -rf coverage && shx rm -rf .nyc_output && shx rm -f oclif.manifest.json",
     "compile": "wireit",
     "docs": "sf-docs",
     "format": "wireit",
+    "link-check": "wireit",
     "lint": "wireit",
-    "postpack": "shx rm -f oclif.manifest.json",
+    "postinstall": "yarn husky install",
+    "postpack": "sf-clean --ignore-signing-artifacts",
     "prepack": "sf-prepack",
     "test": "wireit",
     "test:nuts": "nyc mocha \"**/*.nut.ts\" --slow 4500 --timeout 600000 --parallel",
@@ -166,7 +143,7 @@
       "output": []
     },
     "test:command-reference": {
-      "command": "\"./bin/dev\" commandreference:generate --erroronwarnings",
+      "command": "node --loader ts-node/esm --no-warnings=ExperimentalWarning \"./bin/dev.js\" commandreference:generate --erroronwarnings",
       "files": [
         "src/**/*.ts",
         "messages/**",
@@ -177,7 +154,7 @@
       ]
     },
     "test:deprecation-policy": {
-      "command": "\"./bin/dev\" snapshot:compare",
+      "command": "node --loader ts-node/esm --no-warnings=ExperimentalWarning \"./bin/dev.js\" snapshot:compare",
       "files": [
         "src/**/*.ts"
       ],
@@ -187,13 +164,24 @@
       ]
     },
     "test:json-schema": {
-      "command": "\"./bin/dev\" schema:compare",
+      "command": "node --loader ts-node/esm --no-warnings=ExperimentalWarning \"./bin/dev.js\" schema:compare",
       "files": [
         "src/**/*.ts",
         "schemas"
       ],
       "output": []
+    },
+    "link-check": {
+      "command": "node -e \"process.exit(process.env.CI ? 0 : 1)\" || linkinator \"**/*.md\" --skip \"CHANGELOG.md|node_modules|test/|confluence.internal.salesforce.com|my.salesforce.com|%s\" --markdown --retry --directory-listing --verbosity error",
+      "files": [
+        "./*.md",
+        "./!(CHANGELOG).md",
+        "messages/**/*.md"
+      ],
+      "output": []
     }
   },
-  "author": "mamikals"
+  "exports": "./lib/index.js",
+  "type": "module",
+  "author": "Morten Mikalsen"
 }

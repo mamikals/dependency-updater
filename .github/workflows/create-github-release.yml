@@ -16,7 +16,8 @@ on:
 jobs:
   release:
     uses: salesforcecli/github-workflows/.github/workflows/create-github-release.yml@main
-    secrets: inherit
+    secrets:
+      SVC_CLI_BOT_GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
     with:
       prerelease: ${{ inputs.prerelease }}
       # If this is a push event, we want to skip the release if there are no semantic commits
@@ -27,6 +28,7 @@ jobs:
   #   # Most repos won't use this
   #   # Depends on the 'release' job to avoid git collisions, not for any functionality reason
   #   needs: release
-  #   secrets: inherit
+  #   secrets:
+  #     SVC_CLI_BOT_GITHUB_TOKEN: ${{ secrets.SVC_CLI_BOT_GITHUB_TOKEN }}
   #   if: ${{ github.ref_name == 'main' }}
   #   uses: salesforcecli/github-workflows/.github/workflows/publishTypedoc.yml@main

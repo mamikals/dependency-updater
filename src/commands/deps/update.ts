@@ -50,8 +50,8 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     AuthInfo.getDevHubAuthInfos().then((a: OrgAuthorization[]) =>
       a.find(
         (mort: OrgAuthorization) =>
-          mort.configs != null && mort.configs.length !== 0 && mort.configs.includes('target-dev-hub'),
-      ),
+          mort.configs != null && mort.configs.length !== 0 && mort.configs.includes('target-dev-hub')
+      )
     );
 
   private static checkIfNewerPackageVersion = (originalVersion: string, versionToCheck: string): boolean => {
@@ -83,7 +83,7 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
     this.log(`Connecting to ${authOrg}...`);
     // Create a connection to the org
     const connection = await Connection.create({ authInfo });
-    this.log(`Connected to ${authOrg} (${authInfo.getFields().orgId}) with API version ${connection.version}`);
+    this.log(`Connected to ${authOrg} (${authInfo.getFields()?.orgId ?? ''}) with API version ${connection.version}`);
 
     const neededPackages = await this.getPackageAlias(connection, flags['package-id']);
 
@@ -101,7 +101,7 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
       const localPackage = packs.find((pack) => pack.package === upgrades.packageAlias);
       if (localPackage) {
         this.log(
-          `Comparing Package ${localPackage.package}: original is ${localPackage.versionNumber} and needed is ${upgrades?.packageVersion}`,
+          `Comparing Package ${localPackage.package}: original is ${localPackage.versionNumber} and needed is ${upgrades?.packageVersion}`
         );
         if (DependencyUpdate.checkIfNewerPackageVersion(localPackage.versionNumber, upgrades?.packageVersion)) {
           this.log(`Updating ${upgrades.packageAlias} to version ${upgrades.packageVersion}`);
@@ -112,7 +112,7 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
         }
       } else {
         this.log(
-          `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias.`,
+          `Found dependency for version ${upgrades.packageVersion} of ${upgrades.packageId}, which is not included in the sfdx-project file, adding dependency and alias.`
         );
         const aliasFromDevHub = veryPackageList.find((aliasen) => aliasen.Id === upgrades.packageId);
         if (!aliasFromDevHub) {
@@ -152,7 +152,7 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
 
     if (!results.Package2Id || !results.Version) return Promise.reject(null);
 
-    let alias = this.project.getAliasesFromPackageId(results.Package2Id)[0];
+    let alias = this.project?.getAliasesFromPackageId(results.Package2Id)[0];
     if (!alias) {
       alias = results.Package2Id;
       this.log(`Could not find alias for dependant package ${results.Package2Id}, adding alias based on ID`);
@@ -172,7 +172,7 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
             const newPack = new PackageVersion(newOptions);
             const newResults = await newPack.report(false);
             if (!newResults.Package2Id || !newResults.Version) return reject(null);
-            let newAlias = this.project.getAliasesFromPackageId(newResults.Package2Id)[0];
+            let newAlias = this.project?.getAliasesFromPackageId(newResults.Package2Id)[0];
             if (!newAlias) {
               newAlias = newResults.Package2Id;
               this.log(`Could not find alias for dependant package ${newResults.Package2Id}, adding alias based on ID`);
@@ -182,8 +182,8 @@ export default class DependencyUpdate extends SfCommand<DependencyUpdateResult> 
               packageAlias: newAlias,
               packageVersion: newResults.Version,
             });
-          }),
-        ),
+          })
+        )
       );
       const finalRet = await Promise.all(promiseMap).then((allPackages) => {
         allPackages.forEach((asd) => {
